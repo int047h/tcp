@@ -118,7 +118,7 @@ struct Endpoint
 
 	/// @brief Access sockaddr storage
 	[[nodiscared]] constexpr auto &raw() noexcept { return reinterpret_cast<sockaddr&>(m_endpoint); }
-	//// @brief Access const sockaddr storage
+	/// @brief Access const sockaddr storage
 	[[nodiscared]] constexpr auto const &raw() const noexcept { return reinterpret_cast<const sockaddr&>(m_endpoint); }
 
 	/// @brief Set address of endpoint
