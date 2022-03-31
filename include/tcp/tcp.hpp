@@ -260,7 +260,7 @@ struct Socket
 	/// @brief Sets the blocking mode of the socket.
 	///
 	/// @param block Should socket operations block?
-	bool blocking(const bool block = true) const noexcept
+	bool blocking(bool const block = true) const noexcept
 	{
 		unsigned long mode = block ? 0 : 1;
 		return ::ioctlsocket(m_socket, FIONBIO, &mode) == 0;
