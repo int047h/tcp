@@ -69,7 +69,7 @@ struct Endpoint
 	///
 	/// @param host Hostname
 	/// @param port Port
-	static Endpoint lookup(std::string_view const host, std::uint16_t const port) noexcept
+	[[nodiscard]] static Endpoint lookup(std::string_view const host, std::uint16_t const port) noexcept
 	{
 		addrinfo *result{}, hints{.ai_family = AF_INET, .ai_socktype = SOCK_STREAM};
 		if (::getaddrinfo(host.data(), nullptr, &hints, &result) != 0)
@@ -85,7 +85,7 @@ struct Endpoint
 	///
 	/// @param ip IPv4 address in text representation
 	/// @param port Port
-	static Endpoint derive(std::string_view const ip, std::uint16_t const port) noexcept
+	[[nodiscard]] static Endpoint derive(std::string_view const ip, std::uint16_t const port) noexcept
 	{
 		in_addr address{}; 
 		return ::inet_pton(AF_INET, ip.data(), &address) == 1 
