@@ -257,7 +257,7 @@ struct Socket
 		socket = Socket{::accept(m_socket, &endpoint.raw(), &endpointSize)};
 		return !!socket; // Explicit cast
 	}
-	/// @brief Sets the blocking mode of the socket.
+	/// @brief Sets the blocking mode of the socket
 	///
 	/// @param block Should socket operations block?
 	bool blocking(bool const block = true) const noexcept
