@@ -15,7 +15,7 @@
 #ifdef _WIN32
 # ifndef _WINSOCKAPI_
 #  define _WINSOCKAPI_
-# endif   // _WINSOCKAPI_
+# endif  // _WINSOCKAPI_
 # include <WinSock2.h>
 # include <WS2tcpip.h>
 # pragma comment(lib, "Ws2_32.lib")
@@ -117,9 +117,9 @@ struct Endpoint
 	[[nodiscard]] constexpr bool operator==(Endpoint const &right) const noexcept { return m_endpoint.sin_addr.s_addr == right.m_endpoint.sin_addr.s_addr; }
 
 	/// @brief Access sockaddr storage
-	[[nodiscared]] constexpr auto &raw() noexcept { return reinterpret_cast<sockaddr&>(m_endpoint); }
+	[[nodiscard]] constexpr auto &raw() noexcept { return reinterpret_cast<sockaddr&>(m_endpoint); }
 	/// @brief Access const sockaddr storage
-	[[nodiscared]] constexpr auto const &raw() const noexcept { return reinterpret_cast<const sockaddr&>(m_endpoint); }
+	[[nodiscard]] constexpr auto const &raw() const noexcept { return reinterpret_cast<const sockaddr&>(m_endpoint); }
 
 	/// @brief Set address of endpoint
 	constexpr void setAddress(std::uint32_t const address) noexcept { m_endpoint.sin_addr.s_addr = internal::swapBytes(address); }
