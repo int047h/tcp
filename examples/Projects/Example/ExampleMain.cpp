@@ -1,4 +1,4 @@
-// Copyright© 2021, Ted Pena <https://github.com/int047h>
+// CopyrightÂ© 2022, Ted Pena <https://github.com/int047h>
 // All rights reserved.
 //
 // This file is part of tcp <https://github.com/int047h/tcp>
