@@ -27,9 +27,9 @@ static_assert(false, // TODO:
 namespace tcp {
 namespace internal {
 /// @brief Swap endianness of integral between big-endian and little-endian
-[[nodiscard]] constexpr auto swapBytes(std::integral auto const value) noexcept
+template<std::integral T> [[nodiscard]] constexpr T swapBytes(T const value) noexcept
 {
-	constexpr std::size_t kSize = sizeof(value);
+	constexpr std::size_t kSize{sizeof(value)};
 	if constexpr (kSize == 1)
 		return value;
 	else if constexpr (kSize == 2)
@@ -100,7 +100,7 @@ struct Endpoint
 	/// @param address Host-order address
 	/// @param port Host-order port
 	constexpr explicit Endpoint(std::uint32_t const address, std::uint16_t const port) noexcept: 
-		m_endpoint{AF_INET, internal::swapBytes(port), internal::swapBytes(address)} {}
+		m_endpoint{AF_INET, internal::swapBytes(port), in_addr{.S_un.S_addr = internal::swapBytes(address)}} {}
 
 	/// @brief Construct endpoint from a platform address and port
 	///
@@ -117,9 +117,9 @@ struct Endpoint
 	[[nodiscard]] constexpr bool operator==(Endpoint const &right) const noexcept { return m_endpoint.sin_addr.s_addr == right.m_endpoint.sin_addr.s_addr; }
 
 	/// @brief Access sockaddr storage
-	[[nodiscard]] constexpr auto &raw() noexcept { return reinterpret_cast<sockaddr&>(m_endpoint); }
+	[[nodiscard]] auto &raw() noexcept { return reinterpret_cast<sockaddr&>(m_endpoint); }
 	/// @brief Access const sockaddr storage
-	[[nodiscard]] constexpr auto const &raw() const noexcept { return reinterpret_cast<const sockaddr&>(m_endpoint); }
+	[[nodiscard]] auto const &raw() const noexcept { return reinterpret_cast<const sockaddr&>(m_endpoint); }
 
 	/// @brief Set address of endpoint
 	constexpr void setAddress(std::uint32_t const address) noexcept { m_endpoint.sin_addr.s_addr = internal::swapBytes(address); }
@@ -127,7 +127,7 @@ struct Endpoint
 	constexpr void setPort(std::uint16_t const port) noexcept { m_endpoint.sin_port = internal::swapBytes(port); }
 
 	/// @brief Access address of endpoint
-	[[nodiscard]] constexpr std::uint32_t address()  const noexcept { return internal::swapBytes(m_endpoint.sin_addr.s_addr); }
+	[[nodiscard]] constexpr std::uint32_t address() const noexcept { return internal::swapBytes(m_endpoint.sin_addr.s_addr); }
 	/// @brief Access port of endpoint
 	[[nodiscard]] constexpr std::uint16_t port() const noexcept { return internal::swapBytes(m_endpoint.sin_port); }
 
