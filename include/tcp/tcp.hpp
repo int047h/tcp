@@ -265,6 +265,20 @@ struct Socket
 		unsigned long mode = block ? 0 : 1;
 		return ::ioctlsocket(m_socket, FIONBIO, &mode) == 0;
 	}
+	/// @brief Sets the timeout of blocking receive calls
+	/// 
+	/// @param Number of milliseconds
+	bool recvTimeout(std::uint32_t const ms) const noexcept
+	{
+		return ::setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&ms), sizeof(ms)) == 0;
+	}
+	/// @brief Sets the timeout of blocking send calls
+	/// 
+	/// @param Number of milliseconds
+	bool sendTimeout(std::uint32_t const ms) const noexcept
+	{
+		return ::setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&ms), sizeof(ms)) == 0;
+	}
 
 private:
 	SOCKET m_socket{INVALID_SOCKET};
