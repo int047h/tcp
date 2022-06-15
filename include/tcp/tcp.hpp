@@ -91,6 +91,13 @@ struct Endpoint
 		return ::inet_pton(AF_INET, ip.data(), &address) == 1 
 			? Endpoint{address, port} : Endpoint{};
 	}
+	/// @brief Construct endpoint that can be bound to all interfaces
+	///
+	/// @param port Port
+	[[nodiscard]] static constexpr Endpoint any(std::uint16_t const port) noexcept
+	{
+		return Endpoint{INADDR_ANY, port};
+	}
 
 	constexpr Endpoint() = default;
 	constexpr explicit Endpoint(sockaddr_in const &endpoint) noexcept: m_endpoint{endpoint} {}
@@ -146,7 +153,7 @@ private:
 };
 struct Socket
 {
-	/// @brief Returns IPv4/TCP socket
+	/// @brief Returns streaming socket
 	[[nodiscard]] static Socket create() noexcept
 	{
 		return Socket{::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)};
@@ -167,16 +174,15 @@ struct Socket
 	Socket &operator=(Socket const&) = delete;
 
 	/// @brief Move-construction
-	Socket(Socket &&right) noexcept
-	{
-		*this = std::move(right); // Delegate to move-assignment
-	}
+	Socket(Socket &&right) noexcept:
+		m_socket{right.release()}
+	{}
 	/// @brief Move-assignment
 	Socket &operator=(Socket &&right) noexcept
 	{
 		if (this != &right)
 		{
-			close();
+			close(); // Release existing
 			m_socket = right.release();
 		}
 		return *this;
@@ -260,7 +266,7 @@ struct Socket
 	/// @brief Sets the blocking mode of the socket
 	///
 	/// @param block Should socket operations block?
-	bool blocking(bool const block = true) const noexcept
+	bool setShouldBlock(bool const block = true) const noexcept
 	{
 		unsigned long mode = block ? 0 : 1;
 		return ::ioctlsocket(m_socket, FIONBIO, &mode) == 0;
@@ -268,14 +274,14 @@ struct Socket
 	/// @brief Sets the timeout of blocking receive calls
 	/// 
 	/// @param Number of milliseconds
-	bool recvTimeout(std::uint32_t const ms) const noexcept
+	bool setReceiveTimeout(std::uint32_t const ms) const noexcept
 	{
 		return ::setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&ms), sizeof(ms)) == 0;
 	}
 	/// @brief Sets the timeout of blocking send calls
 	/// 
 	/// @param Number of milliseconds
-	bool sendTimeout(std::uint32_t const ms) const noexcept
+	bool setSendTimeout(std::uint32_t const ms) const noexcept
 	{
 		return ::setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&ms), sizeof(ms)) == 0;
 	}
